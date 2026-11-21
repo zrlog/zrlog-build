@@ -39,6 +39,14 @@ bash "$ZRLOG_BUILD_DIR/scripts/plugin/upload-bin.sh" /tmp/download plugin
 
 插件核心的 JAR、Native 和 FaaS 入口位于 `scripts/plugin/core/`。
 
+## 主题 Maven 发布
+
+主题与 Template SPI 仓库可用完整提交 SHA 调用 `.github/workflows/maven-central.yml`。
+调用方定义触发条件，并通过 `jobs.<job>.secrets` 显式传入 `OSSRH_USERNAME`、
+`OSSRH_PASSWORD`、`GPG_PRIVATE_KEY` 和 `GPG_PASSPHRASE`。
+工作流使用 JDK 21 运行 `./mvnw -B verify`，设置 `clean-verify: true` 时运行 `clean verify`。
+`v*` 标签必须与调用仓库的 POM 版本匹配，之后按 POM 的 `central-release` profile 签名并发布。
+
 ## GitHub Actions 接入
 
 Linux runner 需要 Bash、curl（支持 `--fail-with-body`）、jq、sha256sum 和常规 GNU 工具。
