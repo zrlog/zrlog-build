@@ -93,11 +93,10 @@ Action 没有额外输出；后续步骤继续使用 `artifact-file` 指定的�
 建议将调用方 job 的 `timeout-minutes` 设为 `360`（6 小时），为默认 4 小时等待留出其他步骤的时间；
 需要不同等待时限时，通过 `process-timeout-seconds` 或命令行环境变量覆盖。
 
-服务可配置为 `https://webdav.zrlog.com/artifact`。服务使用
-`ARTIFACT_CONTEXT_PATH=/artifact` 时，基址必须包含 `/artifact`；客户端在其后追加
-`/api/v1/...`，尾部斜杠可省略。消费者配置 `ARTIFACT_SERVICE_URL` Variable 和
-`ARTIFACT_SERVICE_TOKEN` Secret，token 对应服务端的 `ARTIFACT_API_TOKEN`。
-本仓库的 Variable 不会自动传递给其他仓库，消费者需各自配置或使用授权的组织配置。
+ZrLog 构建使用所属组织授权的 `ARTIFACT_SERVICE_URL` Variable。独立接入的仓库可配置同名的仓库级变量。
+服务使用 `ARTIFACT_CONTEXT_PATH=/artifact` 时，基址必须包含 `/artifact`。客户端在其后追加
+`/api/v1/...`，尾部斜杠可省略。消费者通过 `ARTIFACT_SERVICE_TOKEN` Secret 提供服务端
+`ARTIFACT_API_TOKEN` 对应的 token。
 
 ## 命令行接入
 
@@ -106,7 +105,7 @@ Action 没有额外输出；后续步骤继续使用 `artifact-file` 指定的�
 ```bash
 git clone https://github.com/zrlog/zrlog-build.git /tmp/zrlog-build
 git -C /tmp/zrlog-build checkout --detach <full-commit-sha>
-export ARTIFACT_SERVICE_URL=https://webdav.zrlog.com/artifact
+export ARTIFACT_SERVICE_URL=https://artifact.zrlog.com/artifact
 # 通过环境注入 ARTIFACT_SERVICE_TOKEN。
 bash /tmp/zrlog-build/scripts/process-artifact.sh \
   build/my-plugin.bin my-plugin 1.0.0 Linux-amd64
