@@ -1,4 +1,4 @@
-name: ZrLog Process Artifact
+name: ZrLog Build
 author: ZrLog
 description: Process Linux native artifacts through zrlog-artifact-service with SHA-256 and size verification.
 branding:

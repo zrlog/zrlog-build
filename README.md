@@ -10,8 +10,34 @@ GitHub Action and Bash client for processing Linux native binaries through an au
 和 Bash 命令行入口。客户端将原始可执行文件上传到 `zrlog-artifact-service`，轮询处理任务，
 下载结果并核对 SHA-256 和文件大小后，原位替换输入文件。
 
-本仓库维护服务接入、重试、结果校验和临时结果清理。应用编译、插件下载、ZIP/DEB
-组装、更新清单和最终发布由各消费者维护；处理服务的服务端实现也独立维护。
+本仓库维护插件构建脚本和 Native 制品处理客户端。插件仓库通过固定提交调用共享脚本，
+各插件的 Maven profile、构建平台和发布触发条件由各自仓库配置。
+
+## 插件构建
+
+从插件仓库的根目录执行下列命令。示例中的 `ZRLOG_BUILD_DIR` 是检出此仓库的目录。
+CI 将构建库以完整提交 SHA 检出到工作区的 `.zrlog-build`。
+
+```bash
+bash "$ZRLOG_BUILD_DIR/scripts/plugin/build-jar.sh" /tmp/download/plugin
+bash "$ZRLOG_BUILD_DIR/scripts/plugin/build-native.sh" /tmp/download/plugin
+```
+
+两个入口接受输出目录及可选 Maven 参数。JAR 使用 Maven `nodeBuild` profile。
+Native 使用插件自带的 Maven `native` profile 和 Java agent，按平台生成二进制名。
+`build-info.sh` 可单独生成插件属性和预览资源。它默认用调用仓库的完整 Git 历史计算构建号，
+支持 `BUILD_NUMBER` 和 `PLUGIN_BASE_VERSION`。没有预览图的插件设置
+`PLUGIN_PACKAGE_PREVIEW=false`。Site Check 的 Native 步骤使用 `PLUGIN_NATIVE_SKIP_TESTS=true`。
+
+Linux Native 制品先经下方的 Action 处理，再执行上传脚本。上传脚本为目录内的制品生成
+`.md5`，然后通过 AWS CLI 发布到调用方配置的 S3 兼容服务。设置
+`ARTIFACT_BUCKET`、`ARTIFACT_ENDPOINT` 和 AWS CLI 的访问凭据后执行下列命令。
+
+```bash
+bash "$ZRLOG_BUILD_DIR/scripts/plugin/upload-bin.sh" /tmp/download plugin
+```
+
+插件核心的 JAR、Native 和 FaaS 入口位于 `scripts/plugin/core/`。
 
 ## GitHub Actions 接入
 
