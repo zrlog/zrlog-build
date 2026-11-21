@@ -47,6 +47,10 @@ bash "$ZRLOG_BUILD_DIR/scripts/plugin/upload-bin.sh" /tmp/download plugin
 工作流使用 JDK 21 运行 `./mvnw -B verify`，设置 `clean-verify: true` 时运行 `clean verify`。
 `v*` 标签必须与调用仓库的 POM 版本匹配，之后按 POM 的 `central-release` profile 签名并发布。
 
+`scripts/maven/bundle.py` 的 `check_bundle(path, expected_attachments)` 校验本地 Central bundle。
+调用方传入预期的 Maven 仓库相对路径，函数核对 ZIP 内的文件、四种校验和与 Javadoc 首页，
+并返回制品和校验和的数量。
+
 ## GitHub Actions 接入
 
 Linux runner 需要 Bash、curl（支持 `--fail-with-body`）、jq、sha256sum 和常规 GNU 工具。
