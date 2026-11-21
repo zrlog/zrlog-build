@@ -1,7 +1,7 @@
-# ZrLog Process Artifact
+# ZrLog Build
 
 [GitHub Marketplace](https://github.com/marketplace/actions/zrlog-process-artifact) ·
-[Releases](https://github.com/zrlog/zrlog-process-artifact/releases)
+[Releases](https://github.com/zrlog/zrlog-build/releases)
 
 GitHub Action and Bash client for processing Linux native binaries through an authenticated
 `zrlog-artifact-service` endpoint, with SHA-256 and size verification.
@@ -23,7 +23,7 @@ Linux runner 需要 Bash、curl（支持 `--fail-with-body`）、jq、sha256sum 
 ```yaml
 - name: Process Linux native artifact
   if: runner.os == 'Linux'
-  uses: zrlog/zrlog-process-artifact@v1
+  uses: zrlog/zrlog-build@v1
   with:
     artifact-file: build/my-plugin.bin
     artifact-name: my-plugin
@@ -66,11 +66,11 @@ Action 没有额外输出；后续步骤继续使用 `artifact-file` 指定的�
 在包含最终组包逻辑的脚本中使用客户端时，先检出固定提交，再调用同一份 Bash 实现：
 
 ```bash
-git clone https://github.com/zrlog/zrlog-process-artifact.git /tmp/zrlog-process-artifact
-git -C /tmp/zrlog-process-artifact checkout --detach <full-commit-sha>
+git clone https://github.com/zrlog/zrlog-build.git /tmp/zrlog-build
+git -C /tmp/zrlog-build checkout --detach <full-commit-sha>
 export ARTIFACT_SERVICE_URL=https://webdav.zrlog.com/artifact
 # 通过环境注入 ARTIFACT_SERVICE_TOKEN。
-bash /tmp/zrlog-process-artifact/scripts/process-artifact.sh \
+bash /tmp/zrlog-build/scripts/process-artifact.sh \
   build/my-plugin.bin my-plugin 1.0.0 Linux-amd64
 ```
 
@@ -85,7 +85,7 @@ bash /tmp/zrlog-process-artifact/scripts/process-artifact.sh \
 - 每次发布前等待目标提交的客户端 CI 通过，再创建版本标签和 Release，并同步主版本标签。
 
 版本变化见 [CHANGELOG.md](CHANGELOG.md)，已发布版本见
-[GitHub Releases](https://github.com/zrlog/zrlog-process-artifact/releases)。
+[GitHub Releases](https://github.com/zrlog/zrlog-build/releases)。
 
 ## 校验与故障处理
 
