@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-version=$(printf 'VER\t${project.version}' | ./mvnw help:evaluate | grep '^VER' | cut -f2)
+if ! version=$(./mvnw -B -q help:evaluate -Dexpression=project.version -DforceStdout); then
+  printf '%s\n' "$version" >&2
+  exit 1
+fi
+: "${version:?Unable to determine the Maven project version}"
 buildNumber="$(git rev-list --all --count)"
 buildId="$(git rev-parse --short=7 HEAD)"
 
