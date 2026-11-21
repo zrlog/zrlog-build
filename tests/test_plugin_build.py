@@ -70,6 +70,23 @@ fi''')
                          "shortName=example\nversion=4.2.38\n")
         self.assertEqual(self.artifacts.joinpath("example.svg").read_text(), "<svg/>")
 
+    def test_core_build_info_resolves_version_without_maven_prompts(self):
+        subprocess.run(["git", "init", "-q"], cwd=self.root, check=True)
+        subprocess.run([
+            "git", "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+            "-c", "commit.gpgsign=false", "commit", "-q", "--allow-empty", "-m", "Fixture",
+        ], cwd=self.root, check=True)
+        self.executable("mvnw", '''
+[[ "$*" == "-B -q help:evaluate -Dexpression=project.version -DforceStdout" ]]
+printf '4.2.0-SNAPSHOT'
+''')
+
+        self.run_script("core/build-info")
+
+        properties = self.resources.joinpath("conf.properties").read_text().splitlines()
+        self.assertIn("version=4.2.0", properties)
+        self.assertIn("buildNumber=1", properties)
+
     def test_native_keeps_agent_sequence_optional_preview_and_outputs(self):
         self.env["PLUGIN_PACKAGE_PREVIEW"] = "false"
         self.env["PLUGIN_NATIVE_SKIP_TESTS"] = "true"
