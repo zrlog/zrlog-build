@@ -1,6 +1,6 @@
 # ZrLog Build
 
-[GitHub Marketplace](https://github.com/marketplace/actions/zrlog-process-artifact) ·
+[GitHub Marketplace](https://github.com/marketplace/actions/zrlog-build) ·
 [Releases](https://github.com/zrlog/zrlog-build/releases)
 
 GitHub Action and Bash client for processing Linux native binaries through an authenticated
