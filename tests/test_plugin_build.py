@@ -107,6 +107,15 @@ printf '4.2.0-SNAPSHOT'
             "artifact_architecture": "Linux-arm64",
         })
 
+    def test_native_keeps_tests_enabled_by_default(self):
+        self.env.pop("PLUGIN_NATIVE_SKIP_TESTS")
+        self.run_script("build-native", self.artifacts, "-B", "-ntp")
+        self.assertEqual(self.calls.read_text().splitlines(), [
+            "-B -ntp clean", "-B -ntp -PnodeBuild package",
+            "-B -ntp -Pnative -Dagent exec:exec@java-agent -U",
+            "-B -ntp -Pnative package",
+        ])
+
     def test_native_staging_preserves_windows_extension_and_macos_name(self):
         for system, machine, source_extension, architecture, file_extension in (
             ("Darwin", "arm64", "", "Darwin-arm64", ".bin"),
